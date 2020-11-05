@@ -3,10 +3,11 @@ import axios from "axios";
 import Loader from "react-loader-spinner";
 
 const createWilder = async (name, city) => {
-  return axios.post("/api/wilders", { name, city });
+  const response = await axios.post("/api/wilders", { name, city });
+  return response.data.result;
 };
 
-const CreateWilderForm = () => {
+const CreateWilderForm = ({ onSuccess }) => {
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
@@ -18,13 +19,14 @@ const CreateWilderForm = () => {
         event.preventDefault();
         setLoading(true);
         try {
-          await createWilder(name, city);
+          const newWilder = await createWilder(name, city);
           setName("");
           setCity("");
           setFormSubmissionInfo({
             status: "success",
             message: "Wilder created successfully.",
           });
+          onSuccess(newWilder);
         } catch (error) {
           setFormSubmissionInfo({
             status: "failure",

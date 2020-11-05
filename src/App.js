@@ -31,6 +31,10 @@ function App() {
     fetchWilders();
   }, []);
 
+  const addNewWilder = (newWilder) => {
+    setWilders([...wilders, newWilder]);
+  };
+
   return (
     <>
       <header>
@@ -39,7 +43,9 @@ function App() {
         </Container>
       </header>
       <main className="container">
-        {shouldDisplayCreateWilderForm && <CreateWilderForm />}
+        {shouldDisplayCreateWilderForm && (
+          <CreateWilderForm onSuccess={addNewWilder} />
+        )}
         <button
           onClick={() => {
             setShouldDisplayCreateWilderForm(!shouldDisplayCreateWilderForm);
