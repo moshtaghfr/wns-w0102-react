@@ -5,6 +5,7 @@ import Loader from "react-loader-spinner";
 import "./App.css";
 import { Container } from "./components/Styled";
 import Wilder from "./components/Wilder";
+import CreateWilderForm from "./components/CreateWilderForm";
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -34,6 +35,7 @@ function App() {
         </Container>
       </header>
       <main className="container">
+        <CreateWilderForm />
         <h2>Wilders</h2>
         {loading ? (
           <Loader type="Puff" color="#000" height={50} width={50} />
