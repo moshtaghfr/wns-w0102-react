@@ -7,34 +7,70 @@ const createWilder = async (name, city) => {
   return response.data.result;
 };
 
-const CreateWilderForm = ({ onSuccess }) => {
+const useCreateWilderForm = (onSuccess) => {
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
   const [formSubmissionInfo, setFormSubmissionInfo] = useState(null);
 
+  const updateName = (name) => {
+    setFormSubmissionInfo(null);
+    setName(name);
+  };
+
+  const updateCity = (city) => {
+    setFormSubmissionInfo(null);
+    setCity(city);
+  };
+
+  const submitForm = async () => {
+    setLoading(true);
+    try {
+      const newWilder = await createWilder(name, city);
+      setName("");
+      setCity("");
+      setFormSubmissionInfo({
+        status: "success",
+        message: "Wilder created successfully.",
+      });
+      onSuccess(newWilder);
+    } catch (error) {
+      setFormSubmissionInfo({
+        status: "failure",
+        message: "Could not create wilder.",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return [
+    name,
+    updateName,
+    city,
+    updateCity,
+    loading,
+    formSubmissionInfo,
+    submitForm,
+  ];
+};
+
+const CreateWilderForm = ({ onSuccess }) => {
+  const [
+    name,
+    updateName,
+    city,
+    updateCity,
+    loading,
+    formSubmissionInfo,
+    submitForm,
+  ] = useCreateWilderForm(onSuccess);
+
   return (
     <form
       onSubmit={async (event) => {
         event.preventDefault();
-        setLoading(true);
-        try {
-          const newWilder = await createWilder(name, city);
-          setName("");
-          setCity("");
-          setFormSubmissionInfo({
-            status: "success",
-            message: "Wilder created successfully.",
-          });
-          onSuccess(newWilder);
-        } catch (error) {
-          setFormSubmissionInfo({
-            status: "failure",
-            message: "Could not create wilder.",
-          });
-        } finally {
-          setLoading(false);
-        }
+        submitForm();
       }}
     >
       <label htmlFor="wilder-name">
@@ -46,8 +82,7 @@ const CreateWilderForm = ({ onSuccess }) => {
           value={name}
           autoFocus
           onChange={(event) => {
-            setFormSubmissionInfo(null);
-            setName(event.target.value);
+            updateName(event.target.value);
           }}
         />
       </label>
@@ -60,8 +95,7 @@ const CreateWilderForm = ({ onSuccess }) => {
           name="wilder-city"
           value={city}
           onChange={(event) => {
-            setFormSubmissionInfo(null);
-            setCity(event.target.value);
+            updateCity(event.target.value);
           }}
         />
       </label>
