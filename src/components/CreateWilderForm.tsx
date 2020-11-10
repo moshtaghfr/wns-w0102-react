@@ -2,28 +2,44 @@ import React, { useState } from "react";
 import axios from "axios";
 import Loader from "react-loader-spinner";
 
-const createWilder = async (name, city) => {
+type Skill = {
+  title: string;
+  voteCount: number;
+}
+
+type Wilder = {
+  name: string;
+  city: string;
+  skills: Skill[];
+}
+
+type FormSubmissionInfo = {
+  status: 'success' | 'failure';
+  message: string
+} | null
+
+const createWilder = async (name: string, city: string) => {
   const response = await axios.post("/api/wilders", { name, city });
   return response.data.result;
 };
 
-const useCreateWilderForm = (onSuccess) => {
+const useCreateWilderForm = (onSuccess: (wilder: Wilder) => void): [string, (name: string) => void, string, (name: string) => void, boolean, FormSubmissionInfo, () => Promise<void>] => {
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
-  const [formSubmissionInfo, setFormSubmissionInfo] = useState(null);
+  const [formSubmissionInfo, setFormSubmissionInfo] = useState<FormSubmissionInfo>(null);
 
-  const updateName = (name) => {
+  const updateName = (name: string): void => {
     setFormSubmissionInfo(null);
     setName(name);
   };
 
-  const updateCity = (city) => {
+  const updateCity = (city: string): void => {
     setFormSubmissionInfo(null);
     setCity(city);
   };
 
-  const submitForm = async () => {
+  const submitForm = async (): Promise<void> => {
     setLoading(true);
     try {
       const newWilder = await createWilder(name, city);
@@ -55,7 +71,11 @@ const useCreateWilderForm = (onSuccess) => {
   ];
 };
 
-const CreateWilderForm = ({ onSuccess }) => {
+type CreateWilderFormProps = {
+  onSuccess: (wilder: Wilder) => void
+}
+
+const CreateWilderForm = ({ onSuccess }: CreateWilderFormProps): JSX.Element => {
   const [
     name,
     updateName,
