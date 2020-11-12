@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React, { useState } from "react";
 import Loader from "react-loader-spinner";
+import { useQuery, gql } from '@apollo/client';
 
 import "./App.css";
 import { TWilder } from './types';
@@ -8,32 +8,31 @@ import { Container } from "./components/Styled";
 import Wilder from "./components/Wilder";
 import CreateWilderForm from "./components/CreateWilderForm";
 
+const FETCH_WILDERS = gql`
+  query FetchWilders {
+    wilders {
+      id
+      name
+      city
+      skills {
+        id
+        title
+        voteCount
+      }
+    }
+  }
+`
+
 function App() {
-  const [loading, setLoading] = useState(true);
-  const [wilders, setWilders] = useState<TWilder[]>([]);
+  const {loading, error, data} = useQuery(FETCH_WILDERS);
+
   const [
     shouldDisplayCreateWilderForm,
     setShouldDisplayCreateWilderForm,
   ] = useState(false);
 
-  useEffect(() => {
-    const fetchWilders = async () => {
-      try {
-        const result = await axios("/api/wilders");
-        const { wilders } = result.data;
-        setWilders(wilders);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchWilders();
-  }, []);
-
   const addNewWilder = (newWilder: TWilder) => {
-    setWilders([...wilders, newWilder]);
+    // setWilders([...wilders, newWilder]);
   };
 
   return (
@@ -56,11 +55,11 @@ function App() {
             } create wilder form`}
         </button>
         <h2>Wilders</h2>
-        {loading ? (
+        {error ? error.message : loading ? (
           <Loader type="Puff" color="#000" height={50} width={50} />
         ) : (
             <section className="card-row">
-              {wilders.map((wilder) => (
+              {data.wilders.map((wilder: TWilder) => (
                 <Wilder
                   key={wilder.name}
                   name={wilder.name}

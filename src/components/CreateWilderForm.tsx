@@ -3,22 +3,27 @@ import axios from "axios";
 import Loader from "react-loader-spinner";
 
 import { TWilder } from '../types';
+import { gql, useMutation } from "@apollo/client";
 
 type FormSubmissionInfo = {
   status: 'success' | 'failure';
   message: string
 } | null
 
-const createWilder = async (name: string, city: string) => {
-  const response = await axios.post("/api/wilders", { name, city });
-  return response.data.result;
-};
+const CREATE_WILDER = gql`
+  mutation CreateWilder($input: InputWilder!){
+      createWilder(inputWilder: $input){
+          id
+          name
+      }
+  }
+`
 
 const useCreateWilderForm = (onSuccess: (wilder: TWilder) => void): [string, (name: string) => void, string, (name: string) => void, boolean, FormSubmissionInfo, () => Promise<void>] => {
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
-  const [loading, setLoading] = useState(false);
   const [formSubmissionInfo, setFormSubmissionInfo] = useState<FormSubmissionInfo>(null);
+  const [createWilder, {loading, error}] = useMutation(CREATE_WILDER)
 
   const updateName = (name: string): void => {
     setFormSubmissionInfo(null);
@@ -31,23 +36,26 @@ const useCreateWilderForm = (onSuccess: (wilder: TWilder) => void): [string, (na
   };
 
   const submitForm = async (): Promise<void> => {
-    setLoading(true);
     try {
-      const newWilder = await createWilder(name, city);
+      const newWilder = await createWilder({
+        variables: {
+          input: {
+            name,
+            city
+          }
+        }
+      })
       setName("");
       setCity("");
       setFormSubmissionInfo({
         status: "success",
         message: "Wilder created successfully.",
       });
-      onSuccess(newWilder);
     } catch (error) {
       setFormSubmissionInfo({
         status: "failure",
         message: "Could not create wilder.",
       });
-    } finally {
-      setLoading(false);
     }
   };
 

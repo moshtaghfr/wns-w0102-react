@@ -25,5 +25,14 @@ type Wilder {
 }
 
 type Query {
-  wilders: [Wilder]
+  wilders: [Wilder] @listLength(min: 5, max: 20)
+}
+
+input InputWilder {
+  name: String!
+  city: String!
+}
+
+type Mutation {
+  createWilder(inputWilder: InputWilder): Wilder
 }
