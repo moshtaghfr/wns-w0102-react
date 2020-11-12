@@ -1,9 +1,15 @@
 import React from "react";
 
 import blank_profile from "../blank-profile-picture-female.png";
+import {TSkill} from '../types'
 import Skill from "./Skill";
 
-const Wilder = ({ name, skills }) => {
+type WilderProps = {
+  name: string;
+  skills: TSkill[];
+}
+
+const Wilder = ({ name, skills }: WilderProps) => {
   return (
     <article className="card">
       <img src={blank_profile} alt="Jane Doe Profile" />

@@ -3,13 +3,14 @@ import axios from "axios";
 import Loader from "react-loader-spinner";
 
 import "./App.css";
+import { TWilder } from './types';
 import { Container } from "./components/Styled";
 import Wilder from "./components/Wilder";
 import CreateWilderForm from "./components/CreateWilderForm";
 
 function App() {
   const [loading, setLoading] = useState(true);
-  const [wilders, setWilders] = useState([]);
+  const [wilders, setWilders] = useState<TWilder[]>([]);
   const [
     shouldDisplayCreateWilderForm,
     setShouldDisplayCreateWilderForm,
@@ -31,7 +32,7 @@ function App() {
     fetchWilders();
   }, []);
 
-  const addNewWilder = (newWilder) => {
+  const addNewWilder = (newWilder: TWilder) => {
     setWilders([...wilders, newWilder]);
   };
 
@@ -51,24 +52,23 @@ function App() {
             setShouldDisplayCreateWilderForm(!shouldDisplayCreateWilderForm);
           }}
         >
-          {`${
-            shouldDisplayCreateWilderForm ? "Hide" : "Show"
-          } create wilder form`}
+          {`${shouldDisplayCreateWilderForm ? "Hide" : "Show"
+            } create wilder form`}
         </button>
         <h2>Wilders</h2>
         {loading ? (
           <Loader type="Puff" color="#000" height={50} width={50} />
         ) : (
-          <section className="card-row">
-            {wilders.map((wilder) => (
-              <Wilder
-                key={wilder.name}
-                name={wilder.name}
-                skills={wilder.skills}
-              />
-            ))}
-          </section>
-        )}
+            <section className="card-row">
+              {wilders.map((wilder) => (
+                <Wilder
+                  key={wilder.name}
+                  name={wilder.name}
+                  skills={wilder.skills}
+                />
+              ))}
+            </section>
+          )}
       </main>
       <footer>
         <div className="container">

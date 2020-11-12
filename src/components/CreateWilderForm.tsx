@@ -2,16 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import Loader from "react-loader-spinner";
 
-type Skill = {
-  title: string;
-  voteCount: number;
-}
-
-type Wilder = {
-  name: string;
-  city: string;
-  skills: Skill[];
-}
+import { TWilder } from '../types';
 
 type FormSubmissionInfo = {
   status: 'success' | 'failure';
@@ -23,7 +14,7 @@ const createWilder = async (name: string, city: string) => {
   return response.data.result;
 };
 
-const useCreateWilderForm = (onSuccess: (wilder: Wilder) => void): [string, (name: string) => void, string, (name: string) => void, boolean, FormSubmissionInfo, () => Promise<void>] => {
+const useCreateWilderForm = (onSuccess: (wilder: TWilder) => void): [string, (name: string) => void, string, (name: string) => void, boolean, FormSubmissionInfo, () => Promise<void>] => {
   const [name, setName] = useState("");
   const [city, setCity] = useState("");
   const [loading, setLoading] = useState(false);
@@ -72,7 +63,7 @@ const useCreateWilderForm = (onSuccess: (wilder: Wilder) => void): [string, (nam
 };
 
 type CreateWilderFormProps = {
-  onSuccess: (wilder: Wilder) => void
+  onSuccess: (wilder: TWilder) => void
 }
 
 const CreateWilderForm = ({ onSuccess }: CreateWilderFormProps): JSX.Element => {
